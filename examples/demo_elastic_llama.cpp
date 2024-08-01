@@ -17,10 +17,8 @@ using namespace mllm;
 int main(int argc, char **argv) {
     cmdline::parser cmdParser;
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/llama_vocab.mllm");
-
     cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/llama-2-7b-chat-q4_0_4_4.mllm");
-    cmdParser.add<int>("limits", 'l', "max KV cache size", false, 400);
-
+    cmdParser.add<int>("limits", 'l', "max KV cache size", false, 10240);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
 
     cmdParser.add<int>("prompt_len", 'p', "# of input tokens", false, 1);
@@ -42,6 +40,11 @@ int main(int argc, char **argv) {
     auto model = ElasticLLaMAModel(config);
     model.load(model_path);
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+>>>>>>> 2c8e10096b2d389e86a91caad7db1297841b9df5
     std::string prefil_filename = "prefill_llama7b.txt";
     // 使用ofstream对象来写入文件
     std::ofstream prefill_file(prefil_filename, std::ios_base::app);
