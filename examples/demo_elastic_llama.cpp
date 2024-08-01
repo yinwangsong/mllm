@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/llama_vocab.mllm");
     cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/llama-2-7b-chat-q4_0_4_4.mllm");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 10240);
-    cmdParser.add<int>("thread", 't', "num of threads", false, 4);
+    cmdParser.add<int>("thread", 't', "num of threads", false, 1);
 
     cmdParser.add<int>("prompt_len", 'p', "# of input tokens", false, 1);
     cmdParser.add<float>("model_size", 's', "model size", false, 0.1);
