@@ -40,11 +40,6 @@ int main(int argc, char **argv) {
     auto model = ElasticLLaMAModel(config);
     model.load(model_path);
 
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
-
->>>>>>> 2c8e10096b2d389e86a91caad7db1297841b9df5
     std::string prefil_filename = "prefill_llama7b.txt";
     // 使用ofstream对象来写入文件
     std::ofstream prefill_file(prefil_filename, std::ios_base::app);
