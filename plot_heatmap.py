@@ -53,22 +53,22 @@ def plot_heatmap(file_path, name):
     heatmap = sns.heatmap(matrix, annot=False, fmt=".1f", cmap='Reds')  # 改变颜色调为红色系
     # plt.title('Inference Time Heatmap')
     # 设置 x 轴和 y 轴的刻度标签字体大小
-    plt.xticks(fontsize=24)  # 设置 x 轴刻度标签字体大小
-    plt.yticks(fontsize=24, rotation=30)  # 设置 y 轴刻度标签字体大小
+    plt.xticks(fontsize=30, rotation=30)  # 设置 x 轴刻度标签字体大小
+    plt.yticks(fontsize=30, rotation=30)  # 设置 y 轴刻度标签字体大小
 
     # 获取 colorbar 对象
     cbar = heatmap.collections[0].colorbar
     
     # 设置 colorbar 标签
     if 'prefill' in name:
-        cbar.set_label('TTFT (sec.)', fontsize=32)  # 设置字体大小
+        cbar.set_label('TTFT (sec.)', fontsize=38)  # 设置字体大小
     else:
-        cbar.set_label('TPOT (ms)', fontsize=32)  # 设置字体大小
-    cbar.ax.tick_params(labelsize=24)
-    plt.xlabel('Model Size', fontsize=32)
-    plt.ylabel('Prompt Length', fontsize=32)
+        cbar.set_label('TPOT (ms)', fontsize=38)  # 设置字体大小
+    cbar.ax.tick_params(labelsize=30)
+    plt.xlabel('Model Size', fontsize=38)
+    plt.ylabel('Prompt Length', fontsize=38)
     plt.show()
-    plt.savefig(name, format='pdf')
+    plt.savefig(name, format='pdf', bbox_inches='tight',)
 
 # 调用函数
 plot_heatmap('scripts/prefill_llama7b.txt', 'heatmap_prefill.pdf')
