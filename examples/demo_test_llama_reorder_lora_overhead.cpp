@@ -89,9 +89,9 @@ int main(int argc, char **argv) {
     int r = 8;
 
     // creare loras
-    auto lora_a = Tensor(1, 1, r, r, Module::backends[MLLM_CPU], true);
+    auto lora_a = Tensor(1, 1, in_dim,r , Module::backends[MLLM_CPU], true);
     lora_a.setTtype(INPUT_TENSOR);
-    for (int idx1 = 0; idx1 < r; ++idx1) {
+    for (int idx1 = 0; idx1 < in_dim; ++idx1) {
         for (int idx2 = 0; idx2 < r; ++idx2) {
             lora_a.setDataAt<float>(0, 0, idx1, idx2, dis(g));
         }
