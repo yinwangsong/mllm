@@ -1,6 +1,7 @@
 //
-// Created by Rongjie Yi on 2024/2/4 0004.
-//
+// Simulate the latency and energy by the same FLOPs with the similar (not the same) model architecture due to the annoying engineering efforts of constructing a bert from scratch.
+// It works surprisingly accurate on CPUs.
+// Will replace it with the realistic one later.
 
 #ifndef CONFIG_LLAMA_HPP
 #define CONFIG_LLAMA_HPP
@@ -78,24 +79,22 @@ public:
     explicit LLaMAConfig(int token_limit, string billions = "7B", RoPEType type = LLAMAROPE, int vocab = 32000) {
         names_config.init(type);
         vocab_size = vocab;
-        if (billions == "7B" || billions == "7b") {
-            hidden_dim = 4096;
-            head_size = 1;
-            num_key_value_heads = 32;
-            ffn_hidden = 11008;
-            block_num = 32;
+        if (billions == "roberta") {
+            hidden_dim = 1024;
+            head_size = 16;
+            num_key_value_heads = 16;
+            ffn_hidden = 4096;
+            block_num = 24;
             max_position_embeddings= 16384;
             rope_theta = 10000;
-        } else if (billions == "6B" || billions == "6b") {
-            // Yi @https://arxiv.org/abs/2403.04652
-            hidden_dim = 4096;
-            head_size = 32;
+        } else if (billions == "mobilebert") {
+            hidden_dim = 256;
+            head_size = 4;
             num_key_value_heads = 4;
-            ffn_hidden = 11008;
-            block_num = 32;
-            max_position_embeddings= 4096;
-            rope_theta = 5000000.0;
-            vocab_size = 64000;
+            ffn_hidden = 256*5;
+            block_num = 24;
+            max_position_embeddings= 16384;
+            rope_theta = 10000;
         }else {
             throw std::runtime_error("Unsupported model size");
         }

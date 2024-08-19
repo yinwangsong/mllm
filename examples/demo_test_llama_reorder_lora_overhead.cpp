@@ -9,7 +9,7 @@
 
 #include <iostream>
 #include "cmdline.h"
-#include "models/llama/modeling_elastic_llama.hpp"
+#include "models/testlora/modeling_testlora.hpp"
 #include "models/llama/tokenization_llama.hpp"
 #include "processor/PostProcess.hpp"
 #include <fstream>
@@ -67,9 +67,54 @@ int main(int argc, char **argv) {
     // 计算时间差
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
 
-    std::cout << " Execution time: " << duration.count() << " ms" << std::endl;
+    std::cout << " shuffle time: " << duration.count() << " ms" << std::endl;
 
-    
+    // int seq_len = 1;
+    // auto input_tensor = Tensor(1, 1, seq_len, 1, Module::backends[MLLM_CPU], true);
+    // input_tensor.setName("input_ids");
+    // input_tensor.setTtype(INPUT_TENSOR);
+    // for (int idx = 0; idx < seq_len; ++idx) {
+    //     input_tensor.setDataAt<float>(0, 0, idx, 0, 1);
+    // }
+
+    // create a 4096*4096 matrix
+    auto tensor_for_lora = Tensor(1, 1, in_dim, out_dim, Module::backends[MLLM_CPU], true);
+    for (int idx1 = 0; idx1 < in_dim; ++idx1) {
+        for (int idx2 = 0; idx2 < out_dim; ++idx2) {
+            tensor_for_lora.setDataAt<float>(0, 0, idx1, idx2, dis(g));
+        }
+    }
+
+    int r = 8;
+
+    // creare loras
+    auto lora_a = Tensor(1, 1, 1, r, Module::backends[MLLM_CPU], true);
+    for (int idx1 = 0; idx1 < 1; ++idx1) {
+        for (int idx2 = 0; idx2 < r; ++idx2) {
+            lora_a.setDataAt<float>(0, 0, idx1, idx2, dis(g));
+        }
+    }
+
+    auto lora_b = Tensor(1, 1, r, out_dim, Module::backends[MLLM_CPU], true);
+    for (int idx1 = 0; idx1 < r; ++idx1) {
+        for (int idx2 = 0; idx2 < out_dim; ++idx2) {
+            lora_b.setDataAt<float>(0, 0, idx1, idx2, dis(g));
+        }
+    }
+
+    auto model = testlora();
+
+    auto start2 = std::chrono::high_resolution_clock::now();
+
+    model({tensor_for_lora, lora_a, lora_b});
+
+    auto end2 = std::chrono::high_resolution_clock::now();
+
+
+    // 计算时间差
+    auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2);
+    std::cout<< duration2.count();
+
     // tensor_for_reorder.printData<float>();
     return 0;
 }

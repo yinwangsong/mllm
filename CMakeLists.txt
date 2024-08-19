@@ -551,6 +551,18 @@ else ()
     target_link_libraries(demo_test_llama_reorder_lora_overhead MLLM_CPU)
 endif ()
 
+add_executable(demo_test_bert_simulated_by_llama ${PROJECT_SOURCE_DIR}/examples/demo_test_bert_simulated_by_llama.cpp ${DIR_SRC_CPU} ${DIR_SRC_MEM_MANAGER} ${DIR_SRC_EXP} ${DIR_SRC} # ${DIR_SRC_QUANT}
+        src/tokenizers/Tokenizer.cpp
+        src/tokenizers/Tokenizer.hpp
+        src/tokenizers/BPE/Bpe.cpp
+        src/tokenizers/BPE/Bpe.hpp
+)
+if (ARM AND NOT APK)
+    target_compile_options(demo_test_bert_simulated_by_llama PRIVATE -fopenmp)
+    target_link_libraries(demo_test_bert_simulated_by_llama PUBLIC MLLM_CPU -fopenmp -static-openmp)
+else ()
+    target_link_libraries(demo_test_bert_simulated_by_llama MLLM_CPU)
+endif ()
 
 if (APK)
     add_library(mllm_lib STATIC ${DIR_SRC_CPU} ${DIR_SRC_EXP} ${DIR_SRC} ${DIR_SRC_MEM_MANAGER}

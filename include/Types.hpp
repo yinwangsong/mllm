@@ -20,7 +20,7 @@ typedef map<std::string, float> OpParam;
 
 
 // #define DEBUGSAVETENSOR
-// #define DEBUGOPTIME
+#define DEBUGOPTIME
 
 
 #define LLAMAFILE_SGEMM
