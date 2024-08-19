@@ -211,8 +211,10 @@ protected:
             }
         }
 #ifdef DEBUGOPTIME
+    if (TENSOR_STATIC_READY == Tensor::tensor_status){
         auto end_t = mllm_time_us();
         std::cout<<op_->name() << " | "<<Tensor::tensor_status<<" time: " << (end_t - start_t)/1000.0F <<"ms"<< std::endl;
+    }
 #endif
 #ifdef DEBUGSAVETENSOR
         Tensor::graphs[next_name]->saveNData<float>(layer_next_name);

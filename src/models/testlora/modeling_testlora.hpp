@@ -18,16 +18,14 @@ class testlora final : public Module {
 
 public:
     explicit testlora(){
-        int hidden_dim = 4096;
-        int ffn_hidden = 8;
-        up_proj = Linear(ffn_hidden, hidden_dim, false, "up");
-        down_proj = Linear(ffn_hidden, hidden_dim, false, "down");
+        up_proj = Linear(8, 4096, false, "up");
+        down_proj = Linear(8, 11008, false, "down");
     }
 
     vector<Tensor> Forward(vector<Tensor> inputs, vector<std::any> args) override  {
 
 
-        std::cout<<123213;
+        // std::cout<<123213;
         int in_dim = 4096;
         int out_dim = 11008;
         int r = 8;
@@ -35,9 +33,7 @@ public:
         auto tensor_for_lora = inputs[0];
         auto lora_a = up_proj(inputs[1]);
         auto lora_b = down_proj(inputs[1]);
-        lora_b = lora_b.transpose(SEQUENCE, DIMENSION);
-
-        // tensor_for_lora = tensor_for_lora + tensor_for_lora;
+        lora_a = lora_a.transpose(SEQUENCE, DIMENSION);
 
         auto lora_merged = Tensor::mm(lora_a, lora_b);
 

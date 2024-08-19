@@ -79,6 +79,7 @@ int main(int argc, char **argv) {
 
     // create a 4096*4096 matrix
     auto tensor_for_lora = Tensor(1, 1, in_dim, out_dim, Module::backends[MLLM_CPU], true);
+    tensor_for_lora.setTtype(INPUT_TENSOR);
     for (int idx1 = 0; idx1 < in_dim; ++idx1) {
         for (int idx2 = 0; idx2 < out_dim; ++idx2) {
             tensor_for_lora.setDataAt<float>(0, 0, idx1, idx2, dis(g));
@@ -88,14 +89,16 @@ int main(int argc, char **argv) {
     int r = 8;
 
     // creare loras
-    auto lora_a = Tensor(1, 1, 1, r, Module::backends[MLLM_CPU], true);
-    for (int idx1 = 0; idx1 < 1; ++idx1) {
+    auto lora_a = Tensor(1, 1, r, r, Module::backends[MLLM_CPU], true);
+    lora_a.setTtype(INPUT_TENSOR);
+    for (int idx1 = 0; idx1 < r; ++idx1) {
         for (int idx2 = 0; idx2 < r; ++idx2) {
             lora_a.setDataAt<float>(0, 0, idx1, idx2, dis(g));
         }
     }
 
     auto lora_b = Tensor(1, 1, r, out_dim, Module::backends[MLLM_CPU], true);
+    lora_b.setTtype(INPUT_TENSOR);
     for (int idx1 = 0; idx1 < r; ++idx1) {
         for (int idx2 = 0; idx2 < out_dim; ++idx2) {
             lora_b.setDataAt<float>(0, 0, idx1, idx2, dis(g));
@@ -113,7 +116,7 @@ int main(int argc, char **argv) {
 
     // 计算时间差
     auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2);
-    std::cout<< duration2.count();
+    std::cout<< "switch time:" << duration2.count();
 
     // tensor_for_reorder.printData<float>();
     return 0;
