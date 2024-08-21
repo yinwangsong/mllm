@@ -17,17 +17,27 @@ class testlora final : public Module {
 public:
     explicit testlora(){}
     vector<Tensor> Forward(vector<Tensor> inputs, vector<std::any> args) override  {
-        auto tensor_for_lora = inputs[0];
+        // auto tensor_for_lora = inputs[0];
+        // auto lora_a = inputs[1];
+        // auto lora_b = inputs[2];
+
+        // auto lora_merged = Tensor::mm(lora_a, lora_b);
+
+        // tensor_for_lora = tensor_for_lora - lora_merged;
+
+        // tensor_for_lora = tensor_for_lora + lora_merged;
+
+        // return {tensor_for_lora};
+        auto x =  inputs[0];
+
         auto lora_a = inputs[1];
         auto lora_b = inputs[2];
 
-        auto lora_merged = Tensor::mm(lora_a, lora_b);
+        auto tmp = Tensor::mm(x, lora_a);
+        auto out = Tensor::mm(tmp, lora_b);
 
-        tensor_for_lora = tensor_for_lora - lora_merged;
-
-        tensor_for_lora = tensor_for_lora + lora_merged;
-
-        return {tensor_for_lora};
+        auto res = out + x;
+        return {res};
     }
 
 };

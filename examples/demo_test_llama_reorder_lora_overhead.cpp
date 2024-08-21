@@ -11,6 +11,7 @@
 #include "cmdline.h"
 #include "models/testlora/modeling_testlora.hpp"
 #include "models/llama/tokenization_llama.hpp"
+#include "models/testlora/modeling_testlora_sideinference.hpp"
 #include "processor/PostProcess.hpp"
 #include <fstream>
 #include <string>
@@ -26,8 +27,22 @@ int main(int argc, char **argv) {
 
     Module::initBackend(MLLM_CPU);
 
-    int in_dim = 4096;
-    int out_dim = 11008;
+    cmdline::parser cmdParser;
+    cmdParser.add<int>("thread", 't', "num of threads", false, 4);
+
+    cmdParser.add<int>("rank", 'r', "num of rank", false, 8);
+
+    cmdParser.add<int>("indim", 'i', "input dims", false, 4096);
+    cmdParser.add<int>("seqlen", 'l', "seq len", false, 512);
+    cmdParser.add<int>("outdim", 'o', "output dims", false, 4096);
+    cmdParser.parse_check(argc, argv);
+
+    CPUBackend::cpu_threads = cmdParser.get<int>("thread");
+
+
+    int in_dim = cmdParser.get<int>("indim");
+    int out_dim = cmdParser.get<int>("outdim");
+    int seqlen = cmdParser.get<int>("seqlen");
     
     // generate a random 4096 index array for reordering.
     std::vector<int> numbers;
@@ -40,6 +55,12 @@ int main(int argc, char **argv) {
     std::uniform_real_distribution<> dis(0.0, 1.0);
 
     // create a 4096*4096 matrix
+    // auto tensor_for_reorder = Tensor(1, 1, in_dim, out_dim, Module::backends[MLLM_CPU], true);
+    // for (int idx1 = 0; idx1 < in_dim; ++idx1) {
+    //     for (int idx2 = 0; idx2 < out_dim; ++idx2) {
+    //         tensor_for_reorder.setDataAt<float>(0, 0, idx1, idx2, dis(g));
+    //     }
+    // }
     auto tensor_for_reorder = Tensor(1, 1, in_dim, out_dim, Module::backends[MLLM_CPU], true);
     for (int idx1 = 0; idx1 < in_dim; ++idx1) {
         for (int idx2 = 0; idx2 < out_dim; ++idx2) {
@@ -78,15 +99,15 @@ int main(int argc, char **argv) {
     // }
 
     // create a 4096*4096 matrix
-    auto tensor_for_lora = Tensor(1, 1, in_dim, out_dim, Module::backends[MLLM_CPU], true);
+    auto tensor_for_lora = Tensor(1, 1, seqlen, out_dim, Module::backends[MLLM_CPU], true);
     tensor_for_lora.setTtype(INPUT_TENSOR);
-    for (int idx1 = 0; idx1 < in_dim; ++idx1) {
+    for (int idx1 = 0; idx1 < seqlen; ++idx1) {
         for (int idx2 = 0; idx2 < out_dim; ++idx2) {
             tensor_for_lora.setDataAt<float>(0, 0, idx1, idx2, dis(g));
         }
     }
 
-    int r = 8;
+    int r = cmdParser.get<int>("rank");
 
     // creare loras
     auto lora_a = Tensor(1, 1, in_dim,r , Module::backends[MLLM_CPU], true);
@@ -116,7 +137,38 @@ int main(int argc, char **argv) {
 
     // 计算时间差
     auto duration2 = std::chrono::duration_cast<std::chrono::milliseconds>(end2 - start2);
-    std::cout<< "switch time:" << duration2.count();
+    std::cout<< "lora time:" << duration2.count() <<" ms\n";
+
+
+    // int seq_len = 1;
+    // auto input_tensor = Tensor(1, 1, seq_len, 1, Module::backends[MLLM_CPU], true);
+    // input_tensor.setName("input_ids");
+    // input_tensor.setTtype(INPUT_TENSOR);
+    // for (int idx = 0; idx < seq_len; ++idx) {
+    //     input_tensor.setDataAt<float>(0, 0, idx, 0, 1);
+    // }
+
+    // auto x = Tensor(1, 1, 1, in_dim, Module::backends[MLLM_CPU], true);
+    // x.setTtype(INPUT_TENSOR);
+    // for (int idx1 = 0; idx1 < 1; ++idx1) {
+    //     for (int idx2 = 0; idx2 < in_dim; ++idx2) {
+    //         x.setDataAt<float>(0, 0, idx1, idx2, dis(g));
+    //     }
+    // }
+
+
+    // auto model2 = testlora_sideinference();
+
+    // auto start3 = std::chrono::high_resolution_clock::now();
+
+    // model2({x, lora_a, lora_b});
+
+    // auto end3 = std::chrono::high_resolution_clock::now();
+
+
+    // // 计算时间差
+    // auto duration3 = std::chrono::duration_cast<std::chrono::milliseconds>(end3 - start3);
+    // std::cout<< "detached inference time:" << duration3.count();
 
     // tensor_for_reorder.printData<float>();
     return 0;

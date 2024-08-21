@@ -15,4 +15,4 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 #adb shell "cd /data/local/tmp/mllm/bin && ./main_llama"
-adb shell "cd /data/local/tmp/mllm/bin && chmod 777 ./demo_test_llama_reorder_lora_overhead && ./demo_test_llama_reorder_lora_overhead -t 1"
+adb shell "cd /data/local/tmp/mllm/bin && chmod 777 ./demo_test_llama_reorder_lora_overhead && ./demo_test_llama_reorder_lora_overhead"
