@@ -16,8 +16,8 @@ using namespace mllm;
 
 int main(int argc, char **argv) {
     cmdline::parser cmdParser;
-    cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/llama_vocab.mllm");
-    cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/llama-2-7b-chat-q4_0.mllm");
+    // cmdParser.add<string>("vocab", 'v', "specify mllm tokenizer model path", false, "../vocab/llama_vocab.mllm");
+    // cmdParser.add<string>("model", 'm', "specify mllm model path", false, "../models/llama-2-7b-chat-q4_0.mllm");
     cmdParser.add<int>("limits", 'l', "max KV cache size", false, 10240);
     cmdParser.add<int>("thread", 't', "num of threads", false, 4);
 
@@ -28,8 +28,8 @@ int main(int argc, char **argv) {
 
     cmdParser.parse_check(argc, argv);
 
-    string vocab_path = cmdParser.get<string>("vocab");
-    string model_path = cmdParser.get<string>("model");
+    // string vocab_path = cmdParser.get<string>("vocab");
+    // string model_path = cmdParser.get<string>("model");
     int tokens_limit = cmdParser.get<int>("limits");
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
 
@@ -37,7 +37,7 @@ int main(int argc, char **argv) {
     int model_type = cmdParser.get<int>("model_type");
 
 
-    auto tokenizer = LLaMATokenizer(vocab_path);
+    // auto tokenizer = LLaMATokenizer(vocab_path);
 
     string bi = "mobilebert";
     if(model_type == 1){
@@ -76,13 +76,13 @@ int main(int argc, char **argv) {
 
         std::cout << "input_len: " << seq_len << " Execution time: " << duration.count() << " ms" << std::endl;
 
-        auto outputs = tokenizer.detokenize(result[0]);
-        auto out_string = outputs.first;
-        auto out_token = outputs.second;
-        if (out_token == 2) {
-            break;
-        }
-        std::cout << out_string << std::flush;
+        // auto outputs = tokenizer.detokenize(result[0]);
+        // auto out_string = outputs.first;
+        // auto out_token = outputs.second;
+        // if (out_token == 2) {
+        //     break;
+        // }
+        // std::cout << out_string << std::flush;
         // chatPostProcessing(out_token, input_tensor, {});
     }
     printf("\n");
