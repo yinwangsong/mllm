@@ -13,4 +13,4 @@ cmake .. \
 -DARM=ON \
 -DAPK=OFF
 
-make -j48 demo_test_llama_reorder_lora_overhead
+make -j48 demo_test_llama_reorder_lora_overhead demo_test_bert_simulated_by_llama

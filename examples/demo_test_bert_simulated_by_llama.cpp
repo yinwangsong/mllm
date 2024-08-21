@@ -24,6 +24,8 @@ int main(int argc, char **argv) {
     cmdParser.add<int>("prompt_len", 'p', "# of input tokens", false, 1);
     cmdParser.add<float>("model_size", 's', "model size", false, 0.1);
 
+    cmdParser.add<int>("model_type", 'b', "mobilebert or roberta", false, 1);
+
     cmdParser.parse_check(argc, argv);
 
     string vocab_path = cmdParser.get<string>("vocab");
@@ -32,11 +34,23 @@ int main(int argc, char **argv) {
     CPUBackend::cpu_threads = cmdParser.get<int>("thread");
 
     int seq_len = cmdParser.get<int>("prompt_len");
+    int model_type = cmdParser.get<int>("model_type");
+
 
     auto tokenizer = LLaMATokenizer(vocab_path);
 
-    LLaMAConfig config(tokens_limit, "mobilebert", LLAMAROPE);
+    string bi = "mobilebert";
+    if(model_type == 1){
+        bi = "mobilebert";
+    }
+    else{
+        bi = "roberta";
+    }
+
+    LLaMAConfig config(tokens_limit, bi, LLAMAROPE);
     auto model = LLaMAModel(config);
+
+
     // model.load(model_path);
 
     auto input_tensor = Tensor(1, 1, seq_len, 1, Module::backends[MLLM_CPU], true);
